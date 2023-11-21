@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.inputs{
+	display: flex; justify-content: row; background-color:burlywood;
+	margin-bottom: 20px;
+	padding: 10px;
+}
+.output{
+	background-color:aqua;
+}
+.output2{
+	background-color:blue;
+}
+.table-text{
+	margin-left:10px;
+}
+.nametd{
+	margin-top: 25px;
+	background-color:yellowgreen;
+}
+
+
+.info-container {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center ;
+        text-align: left;
+        margin-top: 20px;
+    }
+
+    .info-row {
+        margin: 10px 0;
+display: flex;
+        flex-direction: row;
+    }
+
+.info-activity {
+        font-size:18px;
+        color:white;
+        background-color:black;
+        padding: 10px;
+    }
+    .info-label {
+        height: 25px;
+        width: 150px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .info-value {
+        height: 25px;
+        width: 100px;
+        margin-left: 10px;
+    }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-info-item {
+            margin-bottom: 20px;
+        }
+
+        .contact-info-item a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        .contact-info-item span{
+            font-size: 24px;
+        }
+        .contact-info-item p {
+    margin-bottom: 10px;
+}
+
+
+
+
