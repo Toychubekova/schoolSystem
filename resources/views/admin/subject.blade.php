@@ -1,16 +1,15 @@
 <!-- The sidebar -->
 <div class="sidebar">
   <a class="active" href="#home">Admin panel</a>
-  <a href="..\subject/home">Subject</a>
-  <a href="..\news/create"class="submit"> News</a>
+  <a href="..\subject/create">Subject</a>
+  <a href="#contact">Attendanse</a>
   <a href="..\student/create" class="submit"> Student</a>
   <a href="..\teacher/create" class="submit"> Teacher</a>
-   <a href="..\schedule/home">Schedule</a>
 </div>
 
 <div class="content">
 
-  @include('admin.allUsers')
+  @include('admin.allSubject')
 </div>
 
 <style>

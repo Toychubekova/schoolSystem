@@ -70,6 +70,6 @@ class Kernel extends HttpKernel
         'is_employee' => \App\Http\Middleware\IsEmployee::class,
       'checkRole' => \App\Http\Middleware\CheckUserRole::class,
       'is_admin' => \App\Http\Middleware\IsAdmin::class,
-      'is_admin_or_employee' => \App\Http\Middleware\IsAdminOrEmployee::class,
+      'is_admin_or_teacher' => \App\Http\Middleware\IsAdminOrTeacher::class,
     ];
 }

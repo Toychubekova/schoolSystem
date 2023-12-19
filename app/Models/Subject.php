@@ -5,18 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Subject extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'trek_kod',
-        'kod',
-        'weight',
-        'receipt_A',
-        'dispatch_A',
-        'receipt_B',
-        'issue',
-        'price',
+        'name', 'teacher_id',
     ];
+
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
 }

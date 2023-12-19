@@ -10,7 +10,7 @@
 
 <div class="content">
 
-  @include('admin.allUsers')
+  @include('admin.allNews')
 </div>
 
 <style>

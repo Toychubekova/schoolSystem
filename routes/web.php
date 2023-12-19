@@ -1,139 +1,105 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\NewsController;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Product;
+use App\Models\Teacher;
+use App\Models\Student;
+use App\Models\New;
 
+use Illuminate\Support\Facades\DB;
+
+// Маршрут для корневой страницы, отображает форму входа
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
-Route::get('/contacts',function(){
-    return view('contact');
-})->name('contacts');
 
-Route::get('/admin', function (Request $request) {
-    $users = User::get();
+// Маршрут для создания новости
+Route::get('/new/create', [NewsController::class, 'create'])->name('new.create');
 
-    return view('admin.users', [
-        'users' => $users
-    ]);
-})->middleware(['auth', 'is_admin'])->name('admin.users');
-
-Route::get('/clients', function (Request $request) {
-    return view('dashboard');
-})->middleware(['auth', 'is_admin_or_employee']);
-
-/*Route::get('/admin/user/{id}/edit_role', function (string $id) {
-    $user = User::find($id);
-
-    return view('admin.edit_role', [
-        'user'=>$user
-    ]);
-});*/
-
-
+// Группа маршрутов, требующих аутентификации и административных прав
 Route::middleware(['auth', 'is_admin'])->group(function () {
-    // Маршруты для изменения ролей пользователей
-    /*Route::patch('/users/{user}/changeRoleToEmployee', [RoleController::class, 'changeRoleToEmployee'])
-        ->name('users.changeRoleToEmployee');
+    // Маршруты для управления пользователями
+    Route::controller(UserController::class)->group(function(){
+        Route::get('users', 'index');
+        Route::get('users-export', 'export')->name('users.export');
+        Route::post('users-import', 'import')->name('users.import');
+    });
 
-    Route::patch('/users/{user}/changeRoleToAdmin', [RoleController::class, 'changeRoleToAdmin'])
-        ->name('users.changeRoleToAdmin');*/
-     Route::patch('/users/{user}/updateRole', [RoleController::class, 'updateRole'])
-        ->name('users.updateRole');
+    // Административная панель для просмотра пользователей
+    Route::get('/admin', function (Request $request) {
+        $users = User::get();
+        return view('admin.users', ['users' => $users]);
+    })->name('admin.users');
+
+    // Маршруты для создания студентов и учителей
+    Route::get('/student/create', function () {
+        return view('admin.studentCreate');
+    });
+    Route::post('/student/create',[UserController::class,'create'])->name('student.create');
+
+    Route::get('/teacher/create', function () {
+        return view('admin.teacherCreate');
+    });
+    Route::post('/teacher/create',[UserController::class,'create'])->name('teacher.create');
+
+    // Удаление пользователей
+    Route::delete('/users/{user}/delete',[UserController::class,'destroy'])->name('user.destroy');
+
+    // Обновление пользователей
+    Route::patch('/users/{user}/update', [UserController::class, 'update'])->name('user.update');
+
+    // Маршруты для создания предметов
+    Route::get('/subject/create', [SubjectController::class, 'create'])->name('subject.create');
+    Route::post('/subject/create',[SubjectController::class,'createSubject'])->name('subject.createSubject');
+
+    // Маршруты для создания расписания
+
+    Route::get('/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
+    Route::post('/schedule', [ScheduleController::class, 'store'])->name('schedule.store');
 
 });
-/*Route::post('/user/create', [UserController::class, 'create'])
-        ->name('user.create');*/
 
-Route::post('/user/create', function (Request $request){
+// Маршруты для предметов
+Route::get('/subject/home', [SubjectController::class, 'index'])->name('subject.home');
+Route::get('/subjects/{subject}/edit', [SubjectController::class, 'edit'])->name('subject.edit');
+Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subject.destroy');
+Route::patch('/subjects/{subject}', [SubjectController::class, 'update'])->name('subject.update');
 
-    $user = new User;
-  $user->name = $request->name;
-  $user->number = $request->number;
-  $user->email = $request->email;
-  $user->code = $request->code;
-  $user->password = Hash::make('doni' . $request->code);
-  $user->save();
-    return redirect()->route('admin.users')->with('success', 'Успешно добавлена.');
-})->middleware(['auth', 'is_admin_or_employee'])->name('user.create');
+// Маршруты для расписания
+Route::get('/schedule/home', [ScheduleController::class, 'index'])->name('schedule.home');
+Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedule.edit');
+Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
+Route::patch('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedule.update');
 
+// Маршруты для студентов и учителей
+Route::get('/student/home', [StudentController::class, 'index'])->name('student.home');
+Route::get('/teacher/teacher', [TeacherController::class, 'index'])->name('teacher.teacher');
+
+// Маршрут для отображения профиля пользователя
 Route::get('/dashboard', function (Request $request) {
-    $user=$request->user();
-    $products=Product::where('kod',$user->code)->get();
-    return view('dashboard',[
-        'products'=>$products,'user'=>$user
-    ]);
+    $user = $request->user();
+    return view('dashboard', ['user' => $user]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/details/product/{id}', function (String $id) {
-    $product=Product::find($id);
-    return view('products.detailsProduct',[
-        'product'=>$product
-    ]);
-});
-
+// Маршруты для управления профилем пользователя
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-Route::middleware(['auth', 'is_admin_or_employee'])->group(function () {
-    Route::get('/products', function () {
-  $products = Product::orderBy('created_at', 'asc')->get();
 
-  return view('products.product', [
-    'products' => $products
-  ]);
-})->name('products');
+Route::get('/news/create', [NewsController::class, 'create'])->name('news.create');
+Route::post('/news/create', [NewsController::class, 'store'])->name('news.store');
+Route::get('/new/home', [NewsController::class, 'index'])->name('new.home');
 
-Route::post('/product', function (Request $request) {
-  /*$validator = Validator::make($request->all(), [
-    'name' => 'required|max:255',
-  ]);
 
-  if ($validator->fails()) {
-    return redirect('/')
-      ->withInput()
-      ->withErrors($validator);
-  }*/
-
-  $product = new Product;
-  $product->trek_kod = $request->trek_kod;
-  $product->kod = $request->kod;
-  $product->weight = $request->weight;
-  $product->receipt_A = $request->receipt_A;
-  $product->dispatch_A = $request->dispatch_A;
-  $product->receipt_B = $request->receipt_B;
-  $product->issue = $request->issue;
-  $product->price = $request->price;
-  $product->save();
-
-  return redirect('/products');
-});
-Route::patch('/product/{product}/update', [ProductController::class, 'update'])->name('products.update');
-/*Route::patch('/product/{product}/update', function (Request $request,Product $product) {
-  $product->update(['trek_kod' => $request->trek_kod]);
-  $product->update(['kod' => $request->kod]);
-  $product->update(['weight' => $request->weight]);
-  $product->update(['receipt_A' => $request->receipt_A]);
-  $product->update(['dispatch_A' => $request->dispatch_A]);
-  $product->update(['receipt_B' => $request->receipt_B]);
-  $product->update(['issue' => $request->issue]);
-
-  return redirect('/products');
-})->middleware(['auth', 'is_admin_or_employee'])->name('products.update');*/
-
-Route::delete('/product/{product}/delete', function (Product $product) {
-  $product->delete();
-
-  return redirect('/products');
-})->name('products.delete');
-});
-
+// Включение файла с маршрутами аутентификации
 require __DIR__.'/auth.php';

@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->string('trek_kod');
-            $table->double('weight')->default('0.00');
-            $table->timestamp('receipt_A')->nullable();
-            $table->timestamp('dispatch_A')->nullable();
-            $table->timestamp('receipt_B')->nullable();
-            $table->timestamp('issue')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+
+            // Определение внешнего ключа
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('teachers');
     }
 };

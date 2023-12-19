@@ -25,13 +25,23 @@
                 </div>
                 @endif
 
-                @if (Auth::user()->role ==="admin" or Auth::user()->role ==="employee")
+                @if (Auth::user()->role ==="teacher")
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('products')" :active="request()->routeIs('products')" >
-                        Products
-                    </x-nav-link>
+
+                <x-nav-link :href="route('teacher.teacher')" :active="request()->routeIs('teacher.teacher')" >
+                   Teacher
+               </x-nav-link>
                 </div>
                 @endif
+
+                @if ( Auth::user()->role ==="student")
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+               <x-nav-link :href="route('student.home')" :active="request()->routeIs('student.home')" >
+                   Home
+               </x-nav-link>
+               </div>
+               @endif
+
             </div>
 
             <!-- Settings Dropdown -->
@@ -52,10 +62,6 @@
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <x-dropdown-link :href="route('contacts')">
-                            {{ __('Contacts') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -100,11 +106,9 @@
 
                 @endif
 
-                @if (Auth::user()->role ==="admin" or Auth::user()->role ==="employee")
+                @if (Auth::user()->role ==="admin" or Auth::user()->role ==="teacher")
                 <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('products')" :active="request()->routeIs('products')" >
-                        Products
-            </x-responsive-nav-link>
+
         </div>
 
                 @endif
@@ -119,9 +123,6 @@
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('contacts')">
-                            {{ __('Contacts') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

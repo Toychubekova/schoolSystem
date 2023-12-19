@@ -8,10 +8,6 @@
    <a href="..\schedule/home">Schedule</a>
 </div>
 
-<div class="content">
-
-  @include('admin.allUsers')
-</div>
 
 <style>
   /* The side navigation menu */

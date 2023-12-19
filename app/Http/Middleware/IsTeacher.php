@@ -15,10 +15,10 @@ class IsEmployee
      */
     public function handle($request, Closure $next)
     {
-        if(auth()->user()->role == 'employee'){
+        if(auth()->user()->role == 'teacher'){
             return $next($request);
         }
 
-        return redirect('dashboard')->with('error',"You don't have admin access.");
+        return redirect('dashboard')->with('error',"You don't have teacher access.");
     }
 }
